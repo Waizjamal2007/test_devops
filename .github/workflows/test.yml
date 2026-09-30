@@ -27,7 +27,7 @@ jobs:
       run: npm test
 
   deploy-to-vercel:
-    needs: build-and-test  # Tests pass hone ke baad hi deploy hoga
+    needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
@@ -38,11 +38,8 @@ jobs:
     - name: Install Vercel CLI
       run: npm install --global vercel@latest
 
-    - name: Pull Vercel Environment Information
-      run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-    - name: Build Project artifacts
-      run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
     - name: Deploy to Vercel Production
-      run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --org ${{ secrets.ORG_ID }} --project ${{ secrets.PROJECT_ID }}
+      run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+      env:
+        VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
